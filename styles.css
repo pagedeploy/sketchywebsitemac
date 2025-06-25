@@ -1,0 +1,83 @@
+#shortcutMenu {
+  position: absolute;
+  background-color: #f0f0f0;
+  border: 2px solid #c2c2c2;
+  padding-bottom: 8px;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  z-index: 10000;
+  display: none;
+  border-radius: 10px;
+  min-width: 250px;
+  touch-action: manipulation;
+  cursor: default;
+}
+
+#shortcutMenuHeader {
+  border-radius: 10px 10px 0 0;
+  height: 30px;
+  background: linear-gradient(#e8e8e8, #d2d2d2);
+  border-bottom: 2px solid #c2c2c2;
+  margin-bottom: 12px;
+}
+
+#shortcutMenuContent ul {
+  list-style: none;
+  margin: 0;
+  margin-top: 4px;
+  padding: 0;
+}
+
+#shortcutMenuContent li {
+  padding: 2px 12px;
+}
+
+#shortcutMenuContent li:hover {
+  background-color: #007bff;
+  color: #ffffff;
+}
+
+#shortcutMenuContent strong {
+  padding-left: 12px;
+}
+
+#canvas {
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  cursor: progress;
+
+  background-image: url("https://github.com/pagedeploy/cdn/blob/main/sketchy/src/background.jpg?raw=true");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+
+  transition: background-image 0.1s ease;
+}
+
+.loader {
+  width: 80px;
+  height: 80px;
+  border: solid;
+  border-radius: 50%;
+  border-color: transparent;
+  animation: loader 50s linear infinite;
+  display: inline-block;
+}
+
+@keyframes loader {
+  1% {
+    border-color: transparent;
+    transform: rotate(0deg);
+  }
+
+  2% {
+    border-color: transparent #888888;
+  }
+
+  100% {
+    transform: rotate(9000deg);
+  }
+}

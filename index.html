@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta property="og:title" content="Sketchy Website MacOS" />
+    <meta
+      property="og:description"
+      content="Based on sketchywebsite.net, this clone by Scinovus Crafted is for Macs! It works best in full screen."
+    />
+    <meta
+      property="og:image"
+      content="https://github.com/pagedeploy/cdn/blob/main/sketchy/src/favicon.png?raw=true"
+    />
+    <meta property="og:url" content="https://pagedeploy.github.io/sketchywebsitemac" />
+    <meta property="og:type" content="website" />
+    
+    <title>Sketchy Website MacOS</title>
+    <link 
+      rel="icon" 
+      href="https://github.com/pagedeploy/cdn/blob/main/sketchy/src/favicon.png?raw=true"
+    />
+    
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="loading" style="text-align: center; padding: 50px">
+      <div id="spinner" class="loader"></div>
+    </div>
+    
+    <canvas id="canvas"></canvas>
+    <script src="script.js" async></script>
+
+    <div style="display: none">
+      <audio id="snd0" src="https://github.com/pagedeploy/cdn/raw/refs/heads/main/sketchy/snd/sound0.mp3" controls></audio>
+      <audio id="snd1" src="https://github.com/pagedeploy/cdn/raw/refs/heads/main/sketchy/snd/sound1.mp3" controls></audio>
+      <audio id="snd2" src="https://github.com/pagedeploy/cdn/raw/refs/heads/main/sketchy/snd/sound2.mp3" controls></audio>
+      <audio id="snd3" src="https://github.com/pagedeploy/cdn/raw/refs/heads/main/sketchy/snd/sound3.mp3" controls></audio>
+      <audio id="snd4" src="https://github.com/pagedeploy/cdn/raw/refs/heads/main/sketchy/snd/sound4.mp3" controls></audio>
+      
+      <img id="pic0" src="https://github.com/pagedeploy/cdn/blob/main/sketchy/img/img0.png?raw=true" />
+      <img id="pic1" src="https://github.com/pagedeploy/cdn/blob/main/sketchy/img/img1.png?raw=true" />
+      <img id="pic2" src="https://github.com/pagedeploy/cdn/blob/main/sketchy/img/img2.png?raw=true" />
+      <img id="pic3" src="https://github.com/pagedeploy/cdn/blob/main/sketchy/img/img3.png?raw=true" />
+      <img id="pic4" src="https://github.com/pagedeploy/cdn/blob/main/sketchy/img/img4.png?raw=true" />
+      <img id="pic5" src="https://github.com/pagedeploy/cdn/blob/main/sketchy/img/img5.png?raw=true" />
+      <img id="pic6" src="https://github.com/pagedeploy/cdn/blob/main/sketchy/img/img6.png?raw=true" />
+      <img id="pic7" src="https://github.com/pagedeploy/cdn/blob/main/sketchy/img/img7.png?raw=true" />
+      <img id="pic8" src="https://github.com/pagedeploy/cdn/blob/main/sketchy/img/img8.png?raw=true" />
+      <img id="pic9" src="https://github.com/pagedeploy/cdn/blob/main/sketchy/img/img9.png?raw=true" />
+      <img id="pic10" src="https://github.com/pagedeploy/cdn/blob/main/sketchy/img/img10.png?raw=true" />
+      <img id="pic11" src="https://github.com/pagedeploy/cdn/blob/main/sketchy/img/img11.png?raw=true" />
+      <img id="pic12" src="https://github.com/pagedeploy/cdn/blob/main/sketchy/img/img12.png?raw=true" />
+      <img id="pic13" src="https://github.com/pagedeploy/cdn/blob/main/sketchy/img/img13.png?raw=true" />
+      <img id="pic14" src="https://github.com/pagedeploy/cdn/blob/main/sketchy/img/img14.png?raw=true" />
+      <img id="pic15" src="https://github.com/pagedeploy/cdn/blob/main/sketchy/img/img15.png?raw=true" />
+      <img id="pic16" src="https://github.com/pagedeploy/cdn/blob/main/sketchy/img/img16.png?raw=true" />
+      <img id="pic17" src="https://github.com/pagedeploy/cdn/blob/main/sketchy/img/img17.png?raw=true" />
+      <img id="pic18" src="https://github.com/pagedeploy/cdn/blob/main/sketchy/img/img18.png?raw=true" />
+      <img id="pic19" src="https://github.com/pagedeploy/cdn/blob/main/sketchy/img/img19.png?raw=true" />
+      <img id="pic20" src="https://github.com/pagedeploy/cdn/blob/main/sketchy/img/img20.png?raw=true" />
+    </div>
+
+    <div id="shortcutMenu">
+      <div id="shortcutMenuHeader"></div>
+      <div id="shortcutMenuContent">
+        <strong>Keyboard Shortcuts</strong>
+        <ul>
+          <li onclick="defaultBackground()">⌘ + ⌥ + 1: Default Background</li>
+          <li onclick="setWhiteBackground()">⌘ + ⌥ + 2: White Background</li>
+          <li onclick="setUserBackground()">⌘ + ⌥ + 3: User Background</li>
+          <li onclick="toggleDock()">⌘ + ⌥ + 4: Toggle Dock</li>
+          <li onclick="setsize()">⌘ + ⌥ + 5: Clear All Popups</li>
+          <li onclick="shiftBackgroundLeft()">⌘ + ⌥ + 6: Shift Background Left</li>
+          <li onclick="shiftBackgroundRight()">⌘ + ⌥ + 7: Shift Background Right</li>
+        </ul>
+      </div>
+    </div>
+  </body>
+</html>
