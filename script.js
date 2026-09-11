@@ -3,83 +3,73 @@ let canvas;
 let canvas_ctx;
 let win_height;
 let win_width;
-let drawnImages = []; // Array to store drawn image data
-let dockVisible = true; // Track dock visibility
+let drawnImages = [];             // Array to store drawn image data
+let dockVisible = true;           // Track dock visibility
 
-const whiteBackground = "url(https://github.com/pagedeploy/cdn/blob/main/sketchy/bg/white.png?raw=true)";
 let userSpecifiedBackground = ""; // Store the user-specified background
+let currentIndex = 6;             // Track the current background index (bigsur)
 
-// Array of background images
-const backgrounds = [
-  "url(https://github.com/pagedeploy/cdn/blob/main/sketchy/bg/yosemite.jpg?raw=true)",
-  "url(https://github.com/pagedeploy/cdn/blob/main/sketchy/bg/elcapitan.jpg?raw=true)",
-  "url(https://github.com/pagedeploy/cdn/blob/main/sketchy/bg/sierra.jpg?raw=true)",
-  "url(https://github.com/pagedeploy/cdn/blob/main/sketchy/bg/highsierra.jpg?raw=true)",
-  "url(https://github.com/pagedeploy/cdn/blob/main/sketchy/bg/mojave.jpg?raw=true)",
-  "url(https://github.com/pagedeploy/cdn/blob/main/sketchy/bg/catalina.jpeg?raw=true)",
-  "url(https://github.com/pagedeploy/cdn/blob/main/sketchy/bg/bigsur.jpeg?raw=true)",
-  "url(https://github.com/pagedeploy/cdn/blob/main/sketchy/bg/bigsur2.jpeg?raw=true)",
-  "url(https://github.com/pagedeploy/cdn/blob/main/sketchy/bg/monterey.jpeg?raw=true)",
-  "url(https://github.com/pagedeploy/cdn/blob/main/sketchy/bg/ventura.jpeg?raw=true)",
-  "url(https://github.com/pagedeploy/cdn/blob/main/sketchy/bg/sonoma.jpeg?raw=true)",
-  "url(https://github.com/pagedeploy/cdn/blob/main/sketchy/bg/sonoma2.jpeg?raw=true)",
-  "url(https://github.com/pagedeploy/cdn/blob/main/sketchy/bg/tahoe.jpeg?raw=true)",
+let bgRequest = 0;                // Guards against a slow image landing after another was picked
+
+// Random whole number below max
+function rnd(max) {
+  return parseInt(Math.random() * max);
+}
+
+// Every shortcut in order, driving both the key handler and the menu
+const shortcuts = [
+  ["Default Background", defaultBackground],
+  ["White Background", () => setBackground(whiteBackground)],
+  ["User Background", setUserBackground],
+  ["Toggle Dock", toggleDock],
+  ["Clear All Popups", setsize],
+  ["Shift Background Left", () => shiftBackground(-1)],
+  ["Shift Background Right", () => shiftBackground(1)],
 ];
-
-let currentIndex = 6; // Track the current background index
 
 // Add key combination listener for background changes
 window.addEventListener("keydown", (event) => {
-  // Check for Command + Option + 1
-  if (event.metaKey && event.altKey && event.code === "Digit1") {
-    defaultBackground();
-  }
+  // Check for Command + Option + 1 through 7
+  if (!event.metaKey || !event.altKey) return;
 
-  // Check for Command + Option + 2
-  if (event.metaKey && event.altKey && event.code === "Digit2") {
-    setWhiteBackground();
-  }
-
-  // Check for Command + Option + 3
-  if (event.metaKey && event.altKey && event.code === "Digit3") {
-    setUserBackground();
-  }
-
-  // Check for Command + Option + 4
-  if (event.metaKey && event.altKey && event.code === "Digit4") {
-    toggleDock();
-  }
-
-  // Check for Command + Option + 5
-  if (event.metaKey && event.altKey && event.code === "Digit5") {
-    setsize();
-  }
-
-  // Check for Command + Option + 6
-  if (event.metaKey && event.altKey && event.code === "Digit6") {
-    shiftBackgroundLeft();
-  }
-
-  // Check for Command + Option + 7
-  if (event.metaKey && event.altKey && event.code === "Digit7") {
-    shiftBackgroundRight();
-  }
+  const shortcut = shortcuts[event.code.replace("Digit", "") - 1];
+  if (shortcut) shortcut[1]();
 });
+
+// Paint a background, showing its inline preview until the full image has decoded
+function setBackground(bg) {
+  const request = ++bgRequest;
+  const preview = bg.lqip ? `url("${bg.lqip}")` : "";
+
+  // The preview is inline data so it paints on the very next frame
+  canvas.style.backgroundImage = preview || `url("${bg.url}")`;
+  if (!bg.lqip) return;
+
+  const full = new Image();
+  full.src = bg.url;
+
+  // Layer the full image over the preview once it is ready to paint
+  const reveal = () => {
+    if (request !== bgRequest) return; // A newer background has since been picked
+    canvas.style.backgroundImage = `url("${bg.url}"), ${preview}`;
+  };
+
+  // decode() waits for a paintable image, so the swap never stutters
+  if (full.decode) full.decode().then(reveal, () => {});
+  else full.onload = reveal;
+}
 
 // Set background to a default one from macOS
 function defaultBackground() {
-  canvas.style.backgroundImage = backgrounds[currentIndex];
-}
-
-// Set background to plain white
-function setWhiteBackground() {
-  canvas.style.backgroundImage = whiteBackground;
+  setBackground(backgrounds[currentIndex]);
 }
 
 // Set background to user-specified one
 function setUserBackground() {
   if (userSpecifiedBackground) {
-    canvas.style.backgroundImage = `url(${userSpecifiedBackground})`;
+    // Already a local data URL so there is nothing to preview
+    bgRequest++;
+    canvas.style.backgroundImage = `url("${userSpecifiedBackground}")`;
   } else {
 //    alert('No custom background has been set yet.');
   }
@@ -93,16 +83,10 @@ function toggleDock() {
   setsize();
 }
 
-// Shift background to the left
-function shiftBackgroundLeft() {
-  currentIndex = (currentIndex - 1 + backgrounds.length) % backgrounds.length;
-  canvas.style.backgroundImage = backgrounds[currentIndex];
-}
-
-// Shift background to the right
-function shiftBackgroundRight() {
-  currentIndex = (currentIndex + 1) % backgrounds.length;
-  canvas.style.backgroundImage = backgrounds[currentIndex];
+// Step through the backgrounds, wrapping around at either end
+function shiftBackground(step) {
+  currentIndex = (currentIndex + step + backgrounds.length) % backgrounds.length;
+  setBackground(backgrounds[currentIndex]);
 }
 
 // Drag-and-drop to change the background
@@ -115,7 +99,7 @@ window.addEventListener("drop", (event) => {
     reader.onload = (e) => {
       // Store the dropped image URL and set the background
       userSpecifiedBackground = e.target.result;
-      canvas.style.backgroundImage = `url(${e.target.result})`;
+      setUserBackground();
     };
     reader.readAsDataURL(file);
   } else {
@@ -136,6 +120,14 @@ function setsize() {
 
 const menu = document.getElementById("shortcutMenu");
 
+// Build the menu from the shortcut table so the two never drift apart
+shortcuts.forEach(([label, action], i) => {
+  const item = document.createElement("li");
+  item.textContent = `⌘ + ⌥ + ${i + 1}: ${label}`;
+  item.onclick = action;
+  document.getElementById("shortcutList").appendChild(item);
+});
+
 // Show the shortcut menu on a double click
 document.addEventListener("dblclick", function (e) {
   menu.style.left = `${e.pageX}px`;
@@ -153,18 +145,12 @@ document.addEventListener("click", function (e) {
 // Grab a 100-pixel-tall horizontal strip and move it left or right by 50px
 function effect_tearing() {
   for (let i = 0; i < 5; i++) {
-    let pos_y = parseInt(Math.random() * (win_height - 100)) - 100;
+    const pos_y = rnd(win_height - 100) - 100;
 
+    // prettier-ignore
     canvas_ctx.drawImage(
-      canvas,
-      0,
-      pos_y,
-      win_width,
-      100,
-      parseInt(Math.random() * 2) * 100 - 50, // (+/-)50
-      pos_y,
-      win_width,
-      100
+      canvas, 0, pos_y, win_width, 100,
+      rnd(2) * 100 - 50, pos_y, win_width, 100 // (+/-)50
     );
   }
 }
@@ -172,24 +158,22 @@ function effect_tearing() {
 // Add a random image to the canvas and store its data
 function add_image() {
   // Get a random image element
-  let rnd_pic = document.getElementById("pic" + parseInt(Math.random() * 21));
+  const rnd_pic = document.getElementById("pic" + rnd(21));
 
   // Define the scaling factor (e.g., 0.5 for 50% smaller)
-  let scale = 0.6;
+  const scale = 0.6;
 
-  // Calculate the scaled width and height of the image
-  let scaledWidth = parseInt(rnd_pic.width * scale);
-  let scaledHeight = parseInt(rnd_pic.height * scale);
-
-  // Calculate random positions within the canvas while considering the scaled size
-  let x = parseInt(Math.random() * (win_width - scaledWidth));
-  let y = parseInt(Math.random() * (win_height - scaledHeight)) - 70;
+  // Calculate the scaled size, then a random position that keeps it on screen
+  const width = parseInt(rnd_pic.width * scale);
+  const height = parseInt(rnd_pic.height * scale);
+  const x = rnd(win_width - width);
+  const y = rnd(win_height - height) - 70;
 
   // Draw the scaled image on the canvas
-  canvas_ctx.drawImage(rnd_pic, x, y, scaledWidth, scaledHeight);
+  canvas_ctx.drawImage(rnd_pic, x, y, width, height);
 
   // Store the image's position and size in the array
-  drawnImages.push({ x, y, width: scaledWidth, height: scaledHeight });
+  drawnImages.push({ x, y, width, height });
 }
 
 // Remove the last drawn image with rounded corners
@@ -198,20 +182,15 @@ function remove_image() {
   if (drawnImages.length === 0) return;
 
   // Get the first drawn image's data
-  let image = drawnImages.shift();
+  const { x, y, width, height } = drawnImages.shift();
 
   // Save the current canvas state and set up the rounded rectangle path
   canvas_ctx.save();
   canvas_ctx.beginPath();
-  roundedRect(canvas_ctx, image.x, image.y, image.width, image.height, 10);
+  roundedRect(canvas_ctx, x, y, width, height, 10);
 
   // Create a linear gradient for the top of the rounded rectangle
-  const gradient = canvas_ctx.createLinearGradient(
-    image.x,
-    image.y,
-    image.x,
-    image.y + 30
-  );
+  const gradient = canvas_ctx.createLinearGradient(x, y, x, y + 30);
   gradient.addColorStop(0, "#E8E8E8"); // Lighter gray for the top
   gradient.addColorStop(1, "#D2D2D2"); // Darker gray for the bottom
 
@@ -225,16 +204,11 @@ function remove_image() {
   // Randomly decide whether to restore the image or fill with gray to mimic a blank error
   if (Math.random() < 0.7) {
     // Clear within the path
-    canvas_ctx.clearRect(image.x, image.y + 30, image.width, image.height - 30);
+    canvas_ctx.clearRect(x, y + 30, width, height - 30);
 
-    // Create a subtle shine gradient for a flare effect
-    const shineGradient = canvas_ctx.createLinearGradient(
-      image.x + image.width,
-      image.y + image.height, // Top-left corner
-      image.x,
-      image.y // Bottom-right corner
-    );
-    shineGradient.addColorStop(0, "rgba(255, 255, 255, 0)"); // Fully transparent
+    // Create a subtle shine gradient running corner to corner for a flare effect
+    const shineGradient = canvas_ctx.createLinearGradient(x + width, y + height, x, y);
+    shineGradient.addColorStop(0, "rgba(255, 255, 255, 0)");   // Fully transparent
     shineGradient.addColorStop(1, "rgba(255, 255, 255, 0.4)"); // Semi-transparent white
 
     // Fill with the shine gradient to simulate the light flare
@@ -243,22 +217,23 @@ function remove_image() {
   } else {
     // Fill the bottom part with light gray
     canvas_ctx.fillStyle = "#F0F0F0";
-    canvas_ctx.fillRect(image.x, image.y + 30, image.width, image.height - 30);
+    canvas_ctx.fillRect(x, y + 30, width, height - 30);
   }
 
+  // Draw the divider and the outline in the same line color
+  canvas_ctx.strokeStyle = "#C2C2C2";
+
   // Draw a horizontal line 30 pixels down
-  canvas_ctx.strokeStyle = "#C2C2C2"; // Line color
   canvas_ctx.lineWidth = 2;
   canvas_ctx.beginPath();
-  canvas_ctx.moveTo(image.x, image.y + 30);
-  canvas_ctx.lineTo(image.x + image.width, image.y + 30);
+  canvas_ctx.moveTo(x, y + 30);
+  canvas_ctx.lineTo(x + width, y + 30);
   canvas_ctx.stroke();
 
   // Draw the outline of the rounded rectangle
-  canvas_ctx.strokeStyle = "#C2C2C2"; // Line color
   canvas_ctx.lineWidth = 4;
   canvas_ctx.beginPath();
-  roundedRect(canvas_ctx, image.x, image.y, image.width, image.height, 10);
+  roundedRect(canvas_ctx, x, y, width, height, 10);
 
   // Stroke the path to create the outline
   canvas_ctx.stroke();
@@ -282,42 +257,40 @@ function roundedRect(ctx, x, y, width, height, radius) {
 }
 
 let dock_img = new Image();
-dock_img.src = "https://github.com/pagedeploy/cdn/blob/main/sketchy/src/dock.png?raw=true";
+dock_img.src = CDN + "src/dock.png";
 
 // Add dock image to the bottom of the canvas
 function add_dock() {
-  let dock_width = win_width;
+  // Span the full width and keep the aspect ratio
+  const dock_height = win_width * (dock_img.height / dock_img.width);
 
-  // Maintain aspect ratio
-  let dock_height = dock_width * (dock_img.height / dock_img.width);
-
-  // Center horizontally and align to the bottom of the screen
-  let x = (win_width - dock_width) / 2;
-  let y = win_height - dock_height;
-  canvas_ctx.drawImage(dock_img, x, y, dock_width, dock_height);
+  // Align to the bottom of the screen
+  canvas_ctx.drawImage(dock_img, 0, win_height - dock_height, win_width, dock_height);
 }
 
 // Rewind and play one of the audio elements
 function do_sound() {
-  let rnd_snd = document.getElementById("snd" + parseInt(Math.random() * 5));
+  const rnd_snd = document.getElementById("snd" + rnd(5));
   rnd_snd.currentTime = 0;
   rnd_snd.play();
 }
 
+// Temporarily override a canvas style, then let it snap back
+function flicker(property, value) {
+  canvas.style[property] = value;
+  setTimeout(function () {
+    canvas.style[property] = "";
+  }, 50);
+}
+
 // Temporarily bump the whole screen to one side
 function screen_shake() {
-  canvas.style.left = Math.random() < 0.5 ? "-50px" : "50px";
-  setTimeout(function () {
-    canvas.style.left = "0px";
-  }, 50);
+  flicker("left", Math.random() < 0.5 ? "-50px" : "50px");
 }
 
 // Temporarily tilt the screen
 function screen_tilt() {
-  canvas.style.transform = "rotate(" + parseInt(Math.random() * 360) + "deg)";
-  setTimeout(function () {
-    canvas.style.transform = "";
-  }, 50);
+  flicker("transform", `rotate(${rnd(360)}deg)`);
 }
 
 // Draw vertical lines of "dead pixels" (currently unused)
@@ -354,7 +327,7 @@ function mainloop() {
   if (Math.random() < 0.05) screen_tilt();
 
   add_image(); // Add a new image
-  do_sound(); // Play a sound effect
+  do_sound();  // Play a sound effect
 
   // Occasionally remove an image
   if (Math.random() < 0.2) remove_image();
@@ -365,6 +338,9 @@ function sw_init() {
   document.getElementById("loading").style = "display:none;";
   canvas = document.getElementById("canvas");
   canvas_ctx = canvas.getContext("2d");
+
+  // Upgrade the stylesheet preview to the full-resolution background
+  defaultBackground();
 
   // Set up event listeners and initial canvas size
   window.addEventListener("resize", setsize);

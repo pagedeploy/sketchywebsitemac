@@ -48,8 +48,7 @@
   width: 100%;
   height: 100%;
   cursor: progress;
-
-  background-image: url("https://github.com/pagedeploy/cdn/blob/main/sketchy/src/background.jpg?raw=true");
+  background-image: url("data:image/webp;base64,UklGRnACAABXRUJQVlA4IGQCAADQEQCdASpgAGAAPp1EnEklpzIxK5drIkATiWQGcGSAIA4Td1L0/KAkW+o3D/P/k5+IUNn4T9FpsRalQTuzWWFSrp4+VjYDfTms+IObM9mRgYNFFoFe7j5oF/NHnPh3lEFNBc7APwxxvrldn2xahKXJVPbn/KEfOGLFRULopwfA5vxx15+75jU3TS6SjEqEeVFpVqbTXdoAAP7vcX2T/5IYmetn/WnukJHw9mh1SLszUfqGeDEaSJzwyP4K1Va9BX+xeKoCFVeo9L4Dllg7C8h7/fH9fMXz2E8uX28LmER43p1d//2ktmtF/P//dhIs3vkwCpMBa5r+lkhfB/2UobiH1KXtw9xf8dmULI5vNO0wIcXKb2OLhnxH9rXPyNnAjqYMqamG7nYIDatY7aqvYaLop+oDennQW9wcAGv/wtON3eoBrLgyAJC8oEGv/9EQMrx2RNCqezErYlUOXh0kcCzFH6rbMGGLKNK7O0SKBaQZ+BOfCk2wwwjGtAnG1cnX3OSMMGl8TzvsbX3Z5oDwQJ9tJzyNHt8J3VQhk3hCy2DFe0YrAsjtdsIiktN6b9CVpcCC0/DWX33JMIuPUsuFszAGX4k7m0MaV+n475vz021LHB4JzFEcb9f44gy0qg9hdfm1yrJ+6MANnNBp/u6+O45pkpbrm+9fP5whqsBJXVBJJhTCZ8ujs/jwU99QrpJQQsNwQ82S+IdgVxFPxZ1id/6JYx1vvSY0tyb78fp2ALVpn8Eb5kHmeJr1jErAmApq3a9HUsx6MoMJmL92Je83h501WXn3MshjCOI4BygAAA3P0NQAAAA="); /* Show a 96px preview of bigsur until script.js swaps in the full image */
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
